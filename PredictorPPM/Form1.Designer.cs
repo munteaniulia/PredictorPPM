@@ -28,34 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.l_AccuracyPercentage = new System.Windows.Forms.Label();
+            this.incorrectTextBox = new System.Windows.Forms.Label();
             this.l_accuracy = new System.Windows.Forms.Label();
             this.l_rateError = new System.Windows.Forms.Label();
-            this.l_errorRatePercentage = new System.Windows.Forms.Label();
-            this.numberOfJumps = new System.Windows.Forms.Label();
+            this.correctTextBox = new System.Windows.Forms.Label();
+            this.branchesTextBox = new System.Windows.Forms.Label();
             this.l_numberOfJumps = new System.Windows.Forms.Label();
             this.l_corectPredictions = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.noBranchesTextBox = new System.Windows.Forms.Label();
             this.b_start = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.accuracyProgressBar = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.accuracyLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.t_contextSize = new System.Windows.Forms.TextBox();
-            this.t_m = new System.Windows.Forms.TextBox();
+            this.contextSizeTextBox = new System.Windows.Forms.TextBox();
+            this.mTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.listBox = new System.Windows.Forms.ListBox();
             this.AddFile_b = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // l_AccuracyPercentage
+            // incorrectTextBox
             // 
-            this.l_AccuracyPercentage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.l_AccuracyPercentage.Location = new System.Drawing.Point(132, 315);
-            this.l_AccuracyPercentage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_AccuracyPercentage.Name = "l_AccuracyPercentage";
-            this.l_AccuracyPercentage.Size = new System.Drawing.Size(49, 24);
-            this.l_AccuracyPercentage.TabIndex = 0;
+            this.incorrectTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.incorrectTextBox.Location = new System.Drawing.Point(132, 315);
+            this.incorrectTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.incorrectTextBox.Name = "incorrectTextBox";
+            this.incorrectTextBox.Size = new System.Drawing.Size(49, 24);
+            this.incorrectTextBox.TabIndex = 0;
             // 
             // l_accuracy
             // 
@@ -79,23 +79,23 @@
             this.l_rateError.Text = "Correct Predictions:";
             this.l_rateError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // l_errorRatePercentage
+            // correctTextBox
             // 
-            this.l_errorRatePercentage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.l_errorRatePercentage.Location = new System.Drawing.Point(132, 283);
-            this.l_errorRatePercentage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_errorRatePercentage.Name = "l_errorRatePercentage";
-            this.l_errorRatePercentage.Size = new System.Drawing.Size(49, 24);
-            this.l_errorRatePercentage.TabIndex = 3;
+            this.correctTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.correctTextBox.Location = new System.Drawing.Point(132, 283);
+            this.correctTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.correctTextBox.Name = "correctTextBox";
+            this.correctTextBox.Size = new System.Drawing.Size(49, 24);
+            this.correctTextBox.TabIndex = 3;
             // 
-            // numberOfJumps
+            // branchesTextBox
             // 
-            this.numberOfJumps.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.numberOfJumps.Location = new System.Drawing.Point(132, 212);
-            this.numberOfJumps.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.numberOfJumps.Name = "numberOfJumps";
-            this.numberOfJumps.Size = new System.Drawing.Size(49, 24);
-            this.numberOfJumps.TabIndex = 7;
+            this.branchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.branchesTextBox.Location = new System.Drawing.Point(132, 212);
+            this.branchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.branchesTextBox.Name = "branchesTextBox";
+            this.branchesTextBox.Size = new System.Drawing.Size(49, 24);
+            this.branchesTextBox.TabIndex = 7;
             // 
             // l_numberOfJumps
             // 
@@ -119,14 +119,14 @@
             this.l_corectPredictions.Text = "No branches:";
             this.l_corectPredictions.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label4
+            // noBranchesTextBox
             // 
-            this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label4.Location = new System.Drawing.Point(132, 250);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 24);
-            this.label4.TabIndex = 4;
+            this.noBranchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.noBranchesTextBox.Location = new System.Drawing.Point(132, 250);
+            this.noBranchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.noBranchesTextBox.Name = "noBranchesTextBox";
+            this.noBranchesTextBox.Size = new System.Drawing.Size(49, 24);
+            this.noBranchesTextBox.TabIndex = 4;
             // 
             // b_start
             // 
@@ -135,7 +135,7 @@
             this.b_start.ForeColor = System.Drawing.SystemColors.ControlText;
             this.b_start.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.b_start.Location = new System.Drawing.Point(446, 35);
-            this.b_start.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.b_start.Margin = new System.Windows.Forms.Padding(2);
             this.b_start.Name = "b_start";
             this.b_start.Size = new System.Drawing.Size(136, 81);
             this.b_start.TabIndex = 8;
@@ -143,13 +143,13 @@
             this.b_start.UseVisualStyleBackColor = false;
             this.b_start.Click += new System.EventHandler(this.b_start_Click);
             // 
-            // progressBar1
+            // accuracyProgressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(251, 263);
-            this.progressBar1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(134, 19);
-            this.progressBar1.TabIndex = 9;
+            this.accuracyProgressBar.Location = new System.Drawing.Point(251, 263);
+            this.accuracyProgressBar.Margin = new System.Windows.Forms.Padding(2);
+            this.accuracyProgressBar.Name = "accuracyProgressBar";
+            this.accuracyProgressBar.Size = new System.Drawing.Size(134, 19);
+            this.accuracyProgressBar.TabIndex = 9;
             // 
             // label1
             // 
@@ -162,15 +162,14 @@
             this.label1.TabIndex = 10;
             this.label1.Text = "Accuracy:";
             // 
-            // label2
+            // accuracyLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(346, 288);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "label2";
+            this.accuracyLabel.AutoSize = true;
+            this.accuracyLabel.Location = new System.Drawing.Point(308, 296);
+            this.accuracyLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.accuracyLabel.Name = "accuracyLabel";
+            this.accuracyLabel.Size = new System.Drawing.Size(0, 13);
+            this.accuracyLabel.TabIndex = 11;
             // 
             // label3
             // 
@@ -183,21 +182,21 @@
             this.label3.TabIndex = 12;
             this.label3.Text = "Context size:";
             // 
-            // t_contextSize
+            // contextSizeTextBox
             // 
-            this.t_contextSize.Location = new System.Drawing.Point(506, 248);
-            this.t_contextSize.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.t_contextSize.Name = "t_contextSize";
-            this.t_contextSize.Size = new System.Drawing.Size(76, 20);
-            this.t_contextSize.TabIndex = 13;
+            this.contextSizeTextBox.Location = new System.Drawing.Point(506, 248);
+            this.contextSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.contextSizeTextBox.Name = "contextSizeTextBox";
+            this.contextSizeTextBox.Size = new System.Drawing.Size(76, 20);
+            this.contextSizeTextBox.TabIndex = 13;
             // 
-            // t_m
+            // mTextBox
             // 
-            this.t_m.Location = new System.Drawing.Point(506, 318);
-            this.t_m.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.t_m.Name = "t_m";
-            this.t_m.Size = new System.Drawing.Size(76, 20);
-            this.t_m.TabIndex = 14;
+            this.mTextBox.Location = new System.Drawing.Point(506, 318);
+            this.mTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.mTextBox.Name = "mTextBox";
+            this.mTextBox.Size = new System.Drawing.Size(76, 20);
+            this.mTextBox.TabIndex = 14;
             // 
             // label5
             // 
@@ -236,22 +235,22 @@
             this.Controls.Add(this.AddFile_b);
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.t_m);
-            this.Controls.Add(this.t_contextSize);
+            this.Controls.Add(this.mTextBox);
+            this.Controls.Add(this.contextSizeTextBox);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.accuracyLabel);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.accuracyProgressBar);
             this.Controls.Add(this.b_start);
-            this.Controls.Add(this.numberOfJumps);
+            this.Controls.Add(this.branchesTextBox);
             this.Controls.Add(this.l_numberOfJumps);
             this.Controls.Add(this.l_corectPredictions);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.l_errorRatePercentage);
+            this.Controls.Add(this.noBranchesTextBox);
+            this.Controls.Add(this.correctTextBox);
             this.Controls.Add(this.l_rateError);
             this.Controls.Add(this.l_accuracy);
-            this.Controls.Add(this.l_AccuracyPercentage);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Controls.Add(this.incorrectTextBox);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Predictor PPM";
             this.ResumeLayout(false);
@@ -261,21 +260,21 @@
 
         #endregion
 
-        private System.Windows.Forms.Label l_AccuracyPercentage;
+        private System.Windows.Forms.Label incorrectTextBox;
         private System.Windows.Forms.Label l_accuracy;
         private System.Windows.Forms.Label l_rateError;
-        private System.Windows.Forms.Label l_errorRatePercentage;
-        private System.Windows.Forms.Label numberOfJumps;
+        private System.Windows.Forms.Label correctTextBox;
+        private System.Windows.Forms.Label branchesTextBox;
         private System.Windows.Forms.Label l_numberOfJumps;
         private System.Windows.Forms.Label l_corectPredictions;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label noBranchesTextBox;
         private System.Windows.Forms.Button b_start;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar accuracyProgressBar;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label accuracyLabel;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox t_contextSize;
-        private System.Windows.Forms.TextBox t_m;
+        private System.Windows.Forms.TextBox contextSizeTextBox;
+        private System.Windows.Forms.TextBox mTextBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.Button AddFile_b;
