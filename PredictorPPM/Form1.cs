@@ -20,15 +20,14 @@ namespace PredictorPPM
 
         public struct JumpRecord
         {
-            public string TipBr;  // Tipul saltului
-            public string AdrCrt; // Adresa curentă
-            public string AdrDest; // Adresa de destinație
+            public string TipBr;   // Instruction type (e.g., 'BT', 'BS')
+            public string AdrCrt; // Current address
+            public string AdrDest; // Destination address
         }
 
-        // Încărcarea fișierelor
         private void AddFile_b_Click(object sender, EventArgs e)
         {
-            string directoryPath = @"C:\Users\Iulia Muntean\Documents\GitHub\PredictorPPM\TRAfiles";
+            string directoryPath = @"C:\\Users\\Iulia Muntean\\Documents\\GitHub\\PredictorPPM\\TRAfiles";
 
             if (Directory.Exists(directoryPath))
             {
@@ -40,15 +39,13 @@ namespace PredictorPPM
                 foreach (string filePath in files)
                 {
                     string fileName = Path.GetFileName(filePath);
-                    fileMap[fileName] = filePath; // Salvăm calea completă în dicționar
-                    listBox.Items.Add(fileName); // Afișăm doar numele fișierului
+                    fileMap[fileName] = filePath; // Save the complete file path in the dictionary
+                    listBox.Items.Add(fileName); // Display only the file name
                 }
-
-                MessageBox.Show($"{files.Length} fișiere încărcate!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("Directorul specificat nu există!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The specified directory does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -56,14 +53,14 @@ namespace PredictorPPM
         {
             if (listBox.SelectedItem == null)
             {
-                MessageBox.Show("Selectați un fișier din ListBox!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please select a file from the ListBox!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             string selectedFileName = listBox.SelectedItem.ToString();
             if (!fileMap.TryGetValue(selectedFileName, out string selectedFilePath))
             {
-                MessageBox.Show("Nu s-a găsit calea fișierului selectat!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Could not find the selected file path!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -97,7 +94,7 @@ namespace PredictorPPM
                 {
                     this.Invoke(new Action(() =>
                     {
-                        MessageBox.Show($"Eroare la citirea fișierului: {ex.Message}", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Error reading the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                     return;
                 }
@@ -106,7 +103,7 @@ namespace PredictorPPM
                 {
                     this.Invoke(new Action(() =>
                     {
-                        MessageBox.Show("Fișierul selectat nu conține date valide!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("The selected file does not contain valid data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }));
                     return;
                 }
@@ -115,18 +112,17 @@ namespace PredictorPPM
                 {
                     this.Invoke(new Action(() =>
                     {
-                        MessageBox.Show("Introduceți un Context Size valid!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }));
                     return;
                 }
 
                 BuildPPMModel(maxOrder);
 
-                // Calcularea categoriilor
+                // Statistics and prediction
                 int branches = jumpRecords.Count(r => r.TipBr.StartsWith("B"));
                 int noBranches = jumpRecords.Count(r => r.TipBr.StartsWith("N"));
 
-                // Calcularea predicțiilor corecte și incorecte
                 int correctPredictions = 0;
                 int incorrectPredictions = 0;
 
@@ -137,10 +133,9 @@ namespace PredictorPPM
 
                     string predictedEvent = PredictNextEvent(context, maxOrder);
 
-                    // Compararea exactă a predicțiilor
                     if (predictedEvent != null)
                     {
-                        if (predictedEvent.Equals(actualEvent, StringComparison.Ordinal)) 
+                        if (predictedEvent == actualEvent)
                             correctPredictions++;
                         else
                             incorrectPredictions++;
@@ -151,22 +146,23 @@ namespace PredictorPPM
                     }
                 }
 
-                // Actualizarea UI-ului
+                // Update the UI
                 this.Invoke(new Action(() =>
                 {
                     branchesTextBox.Text = branches.ToString();
                     noBranchesTextBox.Text = noBranches.ToString();
                     correctTextBox.Text = correctPredictions.ToString();
                     incorrectTextBox.Text = incorrectPredictions.ToString();
-                    accuracyProgressBar.Value = (int)((double)correctPredictions / (correctPredictions + incorrectPredictions) * 100);
-                    accuracyLabel.Text = ((double)correctPredictions / (correctPredictions + incorrectPredictions)).ToString("P2");
+
+                    double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
+                    accuracyProgressBar.Value = Math.Min((int)accuracy, 100); // Ensure progress bar doesn't exceed 100
+                    accuracyLabel.Text = $"{accuracy:F2}%"; // Display rounded accuracy
                 }));
             });
 
-            MessageBox.Show("Procesarea a fost finalizată!", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        // Construirea modelului PPM
         private void BuildPPMModel(int maxOrder)
         {
             ppmModel.Clear();
@@ -195,47 +191,9 @@ namespace PredictorPPM
             }
         }
 
-        // Calcularea acurateței
-        private double CalculateAccuracy(int maxOrder)
-        {
-            int correctPredictions = 0;
-            int totalPredictions = 0;
-
-            for (int i = maxOrder; i < jumpRecords.Count; i++)
-            {
-                string context = string.Join(" ", jumpRecords.Skip(i - maxOrder).Take(maxOrder).Select(r => r.TipBr));
-                string actualEvent = jumpRecords[i].TipBr;
-
-                string predictedEvent = PredictNextEvent(context, maxOrder);
-
-                if (predictedEvent != null && predictedEvent[0] == actualEvent[0])
-                {
-                    correctPredictions++;
-                }
-
-                totalPredictions++;
-            }
-
-            return totalPredictions > 0 ? (double)correctPredictions / totalPredictions : 0.0;
-        }
-
-        // Validarea TipBr
-        private bool ValidateTipBr(string tipBr)
-        {
-            if (string.IsNullOrEmpty(tipBr) || tipBr.Length != 2)
-                return false;
-
-            char firstChar = tipBr[0];
-            char secondChar = tipBr[1];
-
-            return (firstChar == 'B' || firstChar == 'N') &&
-                   (secondChar == 'T' || secondChar == 'F' || secondChar == 'S' || secondChar == 'M' || secondChar == 'R');
-        }
-
-        // Predicția următorului eveniment
         private string PredictNextEvent(string context, int maxOrder)
         {
-            for (int order = maxOrder; order >= 0; order--)
+            for (int order = maxOrder; order > 0; order--)
             {
                 string[] contextParts = context.Split(' ');
                 string currentContext = string.Join(" ", contextParts.Skip(Math.Max(0, contextParts.Length - order)));
@@ -246,7 +204,24 @@ namespace PredictorPPM
                 }
             }
 
-            return null;
+            // Fallback to 0-th order: Global frequency
+            return ppmModel.Values
+                           .SelectMany(dict => dict)
+                           .GroupBy(kvp => kvp.Key)
+                           .OrderByDescending(group => group.Sum(kvp => kvp.Value))
+                           .FirstOrDefault()?.Key;
+        }
+
+        private bool ValidateTipBr(string tipBr)
+        {
+            if (string.IsNullOrEmpty(tipBr) || tipBr.Length != 2)
+                return false;
+
+            char firstChar = tipBr[0];
+            char secondChar = tipBr[1];
+
+            return (firstChar == 'B' || firstChar == 'N') &&
+                   (secondChar == 'T' || secondChar == 'F' || secondChar == 'S' || secondChar == 'M' || secondChar == 'R');
         }
     }
 }
