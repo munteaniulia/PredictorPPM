@@ -20,9 +20,9 @@ namespace PredictorPPM
 
         public struct JumpRecord
         {
-            public string TipBr;   // Instruction type (e.g., 'BT', 'BS')
-            public string AdrCrt; // Current address
-            public string AdrDest; // Destination address
+            public string TipBr;   
+            public string AdrCrt; 
+            public string AdrDest; 
         }
 
         private void AddFile_b_Click(object sender, EventArgs e)
@@ -33,14 +33,13 @@ namespace PredictorPPM
             {
                 listBox.Items.Clear();
                 fileMap.Clear();
-
                 string[] files = Directory.GetFiles(directoryPath, "*.tra");
 
                 foreach (string filePath in files)
                 {
                     string fileName = Path.GetFileName(filePath);
-                    fileMap[fileName] = filePath; // Save the complete file path in the dictionary
-                    listBox.Items.Add(fileName); // Display only the file name
+                    fileMap[fileName] = filePath; 
+                    listBox.Items.Add(fileName); 
                 }
             }
             else
@@ -119,7 +118,6 @@ namespace PredictorPPM
 
                 BuildPPMModel(maxOrder);
 
-                // Statistics and prediction
                 int branches = jumpRecords.Count(r => r.TipBr.StartsWith("B"));
                 int noBranches = jumpRecords.Count(r => r.TipBr.StartsWith("N"));
 
@@ -146,7 +144,6 @@ namespace PredictorPPM
                     }
                 }
 
-                // Update the UI
                 this.Invoke(new Action(() =>
                 {
                     branchesTextBox.Text = branches.ToString();
@@ -155,8 +152,8 @@ namespace PredictorPPM
                     incorrectTextBox.Text = incorrectPredictions.ToString();
 
                     double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
-                    accuracyProgressBar.Value = Math.Min((int)accuracy, 100); // Ensure progress bar doesn't exceed 100
-                    accuracyLabel.Text = $"{accuracy:F2}%"; // Display rounded accuracy
+                    accuracyProgressBar.Value = Math.Min((int)accuracy, 100);
+                    accuracyLabel.Text = $"{accuracy:F2}%";
                 }));
             });
 
@@ -204,7 +201,6 @@ namespace PredictorPPM
                 }
             }
 
-            // Fallback to 0-th order: Global frequency
             return ppmModel.Values
                            .SelectMany(dict => dict)
                            .GroupBy(kvp => kvp.Key)

@@ -50,6 +50,7 @@
             // 
             // incorrectTextBox
             // 
+            this.incorrectTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.incorrectTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.incorrectTextBox.Location = new System.Drawing.Point(179, 138);
             this.incorrectTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -81,6 +82,7 @@
             // 
             // correctTextBox
             // 
+            this.correctTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.correctTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.correctTextBox.Location = new System.Drawing.Point(179, 104);
             this.correctTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -90,6 +92,7 @@
             // 
             // branchesTextBox
             // 
+            this.branchesTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.branchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.branchesTextBox.Location = new System.Drawing.Point(179, 29);
             this.branchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -121,6 +124,7 @@
             // 
             // noBranchesTextBox
             // 
+            this.noBranchesTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.noBranchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.noBranchesTextBox.Location = new System.Drawing.Point(179, 68);
             this.noBranchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -145,6 +149,7 @@
             // 
             // accuracyProgressBar
             // 
+            this.accuracyProgressBar.BackColor = System.Drawing.SystemColors.Highlight;
             this.accuracyProgressBar.Location = new System.Drawing.Point(428, 89);
             this.accuracyProgressBar.Margin = new System.Windows.Forms.Padding(2);
             this.accuracyProgressBar.Name = "accuracyProgressBar";
@@ -184,6 +189,7 @@
             // 
             // contextSizeTextBox
             // 
+            this.contextSizeTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.contextSizeTextBox.Location = new System.Drawing.Point(289, 253);
             this.contextSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.contextSizeTextBox.Name = "contextSizeTextBox";
@@ -192,6 +198,7 @@
             // 
             // mTextBox
             // 
+            this.mTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.mTextBox.Location = new System.Drawing.Point(289, 326);
             this.mTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.mTextBox.Name = "mTextBox";
@@ -211,6 +218,7 @@
             // 
             // listBox
             // 
+            this.listBox.BackColor = System.Drawing.Color.SkyBlue;
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(20, 222);
             this.listBox.Name = "listBox";
@@ -219,18 +227,22 @@
             // 
             // AddFile_b
             // 
+            this.AddFile_b.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.AddFile_b.FlatAppearance.BorderColor = System.Drawing.Color.LightSkyBlue;
+            this.AddFile_b.FlatAppearance.BorderSize = 6;
             this.AddFile_b.Location = new System.Drawing.Point(132, 334);
             this.AddFile_b.Name = "AddFile_b";
             this.AddFile_b.Size = new System.Drawing.Size(75, 23);
             this.AddFile_b.TabIndex = 17;
             this.AddFile_b.Text = "Add File";
-            this.AddFile_b.UseVisualStyleBackColor = true;
+            this.AddFile_b.UseVisualStyleBackColor = false;
             this.AddFile_b.Click += new System.EventHandler(this.AddFile_b_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(609, 389);
             this.Controls.Add(this.AddFile_b);
             this.Controls.Add(this.listBox);
