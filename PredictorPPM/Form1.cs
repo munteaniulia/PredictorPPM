@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace PredictorPPM
 {
@@ -16,13 +17,14 @@ namespace PredictorPPM
 
         private List<JumpRecord> jumpRecords = new List<JumpRecord>();
         private Dictionary<string, Dictionary<string, int>> ppmModel = new Dictionary<string, Dictionary<string, int>>();
+        private Dictionary<int, string[]> precomputedContexts = new Dictionary<int, string[]>();
         private Dictionary<string, string> fileMap = new Dictionary<string, string>();
 
         public struct JumpRecord
         {
-            public string TipBr;   
-            public string AdrCrt; 
-            public string AdrDest; 
+            public string TipBr;   // Instruction type (e.g., 'BT', 'BS')
+            public string AdrCrt; // Current address
+            public string AdrDest; // Destination address
         }
 
         private void AddFile_b_Click(object sender, EventArgs e)
@@ -38,8 +40,8 @@ namespace PredictorPPM
                 foreach (string filePath in files)
                 {
                     string fileName = Path.GetFileName(filePath);
-                    fileMap[fileName] = filePath; 
-                    listBox.Items.Add(fileName); 
+                    fileMap[fileName] = filePath;
+                    listBox.Items.Add(fileName);
                 }
             }
             else
@@ -69,23 +71,19 @@ namespace PredictorPPM
             {
                 try
                 {
-                    using (StreamReader reader = new StreamReader(selectedFilePath))
+                    foreach (var line in File.ReadLines(selectedFilePath))
                     {
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            if (string.IsNullOrWhiteSpace(line)) continue;
+                        if (string.IsNullOrWhiteSpace(line)) continue;
 
-                            string[] parts = line.Split(' ');
-                            if (parts.Length == 3 && ValidateTipBr(parts[0]))
+                        string[] parts = line.Split(' ');
+                        if (parts.Length == 3 && ValidateTipBr(parts[0]))
+                        {
+                            jumpRecords.Add(new JumpRecord
                             {
-                                jumpRecords.Add(new JumpRecord
-                                {
-                                    TipBr = parts[0],
-                                    AdrCrt = parts[1],
-                                    AdrDest = parts[2]
-                                });
-                            }
+                                TipBr = parts[0],
+                                AdrCrt = parts[1],
+                                AdrDest = parts[2]
+                            });
                         }
                     }
                 }
@@ -116,6 +114,7 @@ namespace PredictorPPM
                     return;
                 }
 
+                PrecomputeContexts(maxOrder);
                 BuildPPMModel(maxOrder);
 
                 int branches = jumpRecords.Count(r => r.TipBr.StartsWith("B"));
@@ -126,7 +125,7 @@ namespace PredictorPPM
 
                 for (int i = maxOrder; i < jumpRecords.Count; i++)
                 {
-                    string context = string.Join(" ", jumpRecords.Skip(i - maxOrder).Take(maxOrder).Select(r => r.TipBr));
+                    string context = string.Join(" ", precomputedContexts[i].Take(maxOrder));
                     string actualEvent = jumpRecords[i].TipBr;
 
                     string predictedEvent = PredictNextEvent(context, maxOrder);
@@ -160,32 +159,53 @@ namespace PredictorPPM
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void BuildPPMModel(int maxOrder)
+        private void PrecomputeContexts(int maxOrder)
         {
-            ppmModel.Clear();
-
+            precomputedContexts.Clear();
             for (int i = 0; i < jumpRecords.Count; i++)
             {
+                precomputedContexts[i] = new string[maxOrder];
+                string context = "";
                 for (int order = 1; order <= maxOrder; order++)
                 {
                     if (i - order < 0) break;
 
-                    string context = string.Join(" ", jumpRecords.Skip(i - order).Take(order).Select(r => r.TipBr));
-                    string currentEvent = jumpRecords[i].TipBr;
-
-                    if (!ppmModel.ContainsKey(context))
-                    {
-                        ppmModel[context] = new Dictionary<string, int>();
-                    }
-
-                    if (!ppmModel[context].ContainsKey(currentEvent))
-                    {
-                        ppmModel[context][currentEvent] = 0;
-                    }
-
-                    ppmModel[context][currentEvent]++;
+                    context = jumpRecords[i - order].TipBr + (context == "" ? "" : " ") + context;
+                    precomputedContexts[i][order - 1] = context;
                 }
             }
+        }
+
+        private void BuildPPMModel(int maxOrder)
+        {
+            ppmModel.Clear();
+
+            Parallel.For(0, jumpRecords.Count, i =>
+            {
+                string context = "";
+                for (int order = 1; order <= maxOrder; order++)
+                {
+                    if (i - order < 0) break;
+
+                    context = jumpRecords[i - order].TipBr + (context == "" ? "" : " ") + context;
+                    string currentEvent = jumpRecords[i].TipBr;
+
+                    lock (ppmModel)
+                    {
+                        if (!ppmModel.ContainsKey(context))
+                        {
+                            ppmModel[context] = new Dictionary<string, int>();
+                        }
+
+                        if (!ppmModel[context].ContainsKey(currentEvent))
+                        {
+                            ppmModel[context][currentEvent] = 0;
+                        }
+
+                        ppmModel[context][currentEvent]++;
+                    }
+                }
+            });
         }
 
         private string PredictNextEvent(string context, int maxOrder)
@@ -193,11 +213,11 @@ namespace PredictorPPM
             for (int order = maxOrder; order > 0; order--)
             {
                 string[] contextParts = context.Split(' ');
-                string currentContext = string.Join(" ", contextParts.Skip(Math.Max(0, contextParts.Length - order)));
+                string currentContext = string.Join(" ", contextParts.Skip(contextParts.Length - order));
 
-                if (ppmModel.ContainsKey(currentContext))
+                if (ppmModel.TryGetValue(currentContext, out var predictions))
                 {
-                    return ppmModel[currentContext].OrderByDescending(kvp => kvp.Value).First().Key;
+                    return predictions.OrderByDescending(kvp => kvp.Value).First().Key;
                 }
             }
 
