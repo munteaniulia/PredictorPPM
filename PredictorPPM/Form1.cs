@@ -22,9 +22,9 @@ namespace PredictorPPM
 
         public struct JumpRecord
         {
-            public string TipBr;   // Instruction type (e.g., 'BT', 'BS')
-            public string AdrCrt; // Current address
-            public string AdrDest; // Destination address
+            public string TipBr; 
+            public string AdrCrt; 
+            public string AdrDest; 
         }
 
         private void AddFile_b_Click(object sender, EventArgs e)
@@ -162,17 +162,19 @@ namespace PredictorPPM
         private void PrecomputeContexts(int maxOrder)
         {
             precomputedContexts.Clear();
+
             for (int i = 0; i < jumpRecords.Count; i++)
             {
-                precomputedContexts[i] = new string[maxOrder];
-                string context = "";
-                for (int order = 1; order <= maxOrder; order++)
-                {
-                    if (i - order < 0) break;
+                var contexts = new string[maxOrder];
+                var context = "";
 
+                for (int order = 1; order <= maxOrder && i - order >= 0; order++)
+                {
                     context = jumpRecords[i - order].TipBr + (context == "" ? "" : " ") + context;
-                    precomputedContexts[i][order - 1] = context;
+                    contexts[order - 1] = context;
                 }
+
+                precomputedContexts[i] = contexts;
             }
         }
 
