@@ -15,7 +15,7 @@ namespace PredictorPPM
         }
 
         private List<JumpRecord> jumpRecords = new List<JumpRecord>();
-        private Dictionary<string, int> frequencyTable = new Dictionary<string, int>();
+        private Dictionary<string, Dictionary<string, int>> frequencyTable;
         private Dictionary<string, string> fileMap = new Dictionary<string, string>();
         private List<bool> globalBranchStatus = new List<bool>();
 
@@ -125,7 +125,7 @@ namespace PredictorPPM
                 int correctPredictions = 0;
                 int incorrectPredictions = 0;
 
-                for (int i = HRg; i < jumpRecords.Count - 1; i++)
+                for (int i = 0; i < jumpRecords.Count; i++)
                 {
                     DetermineBranchStatus();
                     string predictedEvent = PredictNextEvent(HRg, maxOrder, i);
@@ -158,21 +158,37 @@ namespace PredictorPPM
 
             foreach (var record in jumpRecords)
             {
-                globalBranchStatus.Add(record.AdrDest != (int.Parse(record.AdrCrt) + 1).ToString());
+                if (int.TryParse(record.AdrCrt, out int adrCrt) && int.TryParse(record.AdrDest, out int adrDest))
+                {
+                    globalBranchStatus.Add(adrDest != adrCrt + 1);
+                }
+                else
+                {
+                    globalBranchStatus.Add(false);
+                }
             }
         }
 
         private void CreateFrequencyTable(int HRg, int indexOfBranch, int order)
         {
-            frequencyTable.Clear();
-            string context = string.Join(" ", globalBranchStatus.Skip(indexOfBranch - order).Take(order));
+            frequencyTable = new Dictionary<string, Dictionary<string, int>>();
 
-            if (!frequencyTable.ContainsKey(context))
+            for (int i = Math.Max(0, indexOfBranch - HRg); i < indexOfBranch; i++)
             {
-                frequencyTable[context] = 0;
+                if (i + order >= jumpRecords.Count) continue;
+
+                string context = string.Join(" ", globalBranchStatus.Skip(i).Take(order));
+                string nextBit = globalBranchStatus[i + order].ToString();
+
+                if (!frequencyTable.ContainsKey(context))
+                {
+                    frequencyTable[context] = new Dictionary<string, int> { { "True", 0 }, { "False", 0 } };
+                }
+
+                frequencyTable[context][nextBit]++;
             }
-            frequencyTable[context]++;
         }
+
 
         private string PredictNextEvent(int HRg, int maxOrder, int indexOfBranch)
         {
@@ -180,17 +196,24 @@ namespace PredictorPPM
             {
                 if (indexOfBranch - order < 0) continue;
 
-                CreateFrequencyTable(HRg, indexOfBranch, order);
-                string context = string.Join(" ", globalBranchStatus.Skip(indexOfBranch - order).Take(order));
+                string context = string.Join(" ", globalBranchStatus.Skip(Math.Max(0, indexOfBranch - order)).Take(order));
 
-                if (frequencyTable.TryGetValue(context, out _))
+                CreateFrequencyTable(HRg, indexOfBranch, order);
+
+                if (frequencyTable.ContainsKey(context))
                 {
-                    return frequencyTable.OrderByDescending(kvp => kvp.Value).First().Key;
+                    return frequencyTable[context].OrderByDescending(kvp => kvp.Value).First().Key;
                 }
             }
 
-            return "0"; // Default prediction if no match is found
+            int trueCount = globalBranchStatus.Take(indexOfBranch).Count(x => x);
+            int falseCount = indexOfBranch - trueCount;
+
+            return trueCount >= falseCount ? "True" : "False";
         }
+
+
+
 
         private bool ValidateTipBr(string tipBr)
         {
