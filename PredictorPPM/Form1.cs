@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace PredictorPPM
 {
@@ -16,15 +15,15 @@ namespace PredictorPPM
         }
 
         private List<JumpRecord> jumpRecords = new List<JumpRecord>();
-        private Dictionary<string, Dictionary<string, int>> ppmModel = new Dictionary<string, Dictionary<string, int>>();
-        private Dictionary<int, string[]> precomputedContexts = new Dictionary<int, string[]>();
+        private Dictionary<string, int> frequencyTable = new Dictionary<string, int>();
         private Dictionary<string, string> fileMap = new Dictionary<string, string>();
+        private List<bool> globalBranchStatus = new List<bool>();
 
         public struct JumpRecord
         {
-            public string TipBr; 
-            public string AdrCrt; 
-            public string AdrDest; 
+            public string TipBr;
+            public string AdrCrt;
+            public string AdrDest;
         }
 
         private void AddFile_b_Click(object sender, EventArgs e)
@@ -105,7 +104,7 @@ namespace PredictorPPM
                     return;
                 }
 
-                if (!int.TryParse(contextSizeTextBox.Text, out int maxOrder) || maxOrder <= 0)
+                if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
                 {
                     this.Invoke(new Action(() =>
                     {
@@ -114,39 +113,33 @@ namespace PredictorPPM
                     return;
                 }
 
-                PrecomputeContexts(maxOrder);
-                BuildPPMModel(maxOrder);
-
-                int branches = jumpRecords.Count(r => r.TipBr.StartsWith("B"));
-                int noBranches = jumpRecords.Count(r => r.TipBr.StartsWith("N"));
+                if (!int.TryParse(mTextBox.Text, out int maxOrder) || maxOrder < 0)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("Please enter a valid Order Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }));
+                    return;
+                }
 
                 int correctPredictions = 0;
                 int incorrectPredictions = 0;
 
-                for (int i = maxOrder; i < jumpRecords.Count; i++)
+                for (int i = HRg; i < jumpRecords.Count - 1; i++)
                 {
-                    string context = string.Join(" ", precomputedContexts[i].Take(maxOrder));
-                    string actualEvent = jumpRecords[i].TipBr;
+                    DetermineBranchStatus();
+                    string predictedEvent = PredictNextEvent(HRg, maxOrder, i);
+                    string actualEvent = globalBranchStatus[i].ToString();
 
-                    string predictedEvent = PredictNextEvent(context, maxOrder);
-
-                    if (predictedEvent != null)
-                    {
-                        if (predictedEvent == actualEvent)
-                            correctPredictions++;
-                        else
-                            incorrectPredictions++;
-                    }
+                    if (predictedEvent == actualEvent)
+                        correctPredictions++;
                     else
-                    {
                         incorrectPredictions++;
-                    }
                 }
 
                 this.Invoke(new Action(() =>
                 {
-                    branchesTextBox.Text = branches.ToString();
-                    noBranchesTextBox.Text = noBranches.ToString();
+                    TotalTextBox.Text = jumpRecords.Count.ToString();
                     correctTextBox.Text = correctPredictions.ToString();
                     incorrectTextBox.Text = incorrectPredictions.ToString();
 
@@ -159,75 +152,44 @@ namespace PredictorPPM
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void PrecomputeContexts(int maxOrder)
+        private void DetermineBranchStatus()
         {
-            precomputedContexts.Clear();
+            globalBranchStatus.Clear();
 
-            for (int i = 0; i < jumpRecords.Count; i++)
+            foreach (var record in jumpRecords)
             {
-                var contexts = new string[maxOrder];
-                var context = "";
-
-                for (int order = 1; order <= maxOrder && i - order >= 0; order++)
-                {
-                    context = jumpRecords[i - order].TipBr + (context == "" ? "" : " ") + context;
-                    contexts[order - 1] = context;
-                }
-
-                precomputedContexts[i] = contexts;
+                globalBranchStatus.Add(record.AdrDest != (int.Parse(record.AdrCrt) + 1).ToString());
             }
         }
 
-        private void BuildPPMModel(int maxOrder)
+        private void CreateFrequencyTable(int HRg, int indexOfBranch, int order)
         {
-            ppmModel.Clear();
+            frequencyTable.Clear();
+            string context = string.Join(" ", globalBranchStatus.Skip(indexOfBranch - order).Take(order));
 
-            Parallel.For(0, jumpRecords.Count, i =>
+            if (!frequencyTable.ContainsKey(context))
             {
-                string context = "";
-                for (int order = 1; order <= maxOrder; order++)
-                {
-                    if (i - order < 0) break;
-
-                    context = jumpRecords[i - order].TipBr + (context == "" ? "" : " ") + context;
-                    string currentEvent = jumpRecords[i].TipBr;
-
-                    lock (ppmModel)
-                    {
-                        if (!ppmModel.ContainsKey(context))
-                        {
-                            ppmModel[context] = new Dictionary<string, int>();
-                        }
-
-                        if (!ppmModel[context].ContainsKey(currentEvent))
-                        {
-                            ppmModel[context][currentEvent] = 0;
-                        }
-
-                        ppmModel[context][currentEvent]++;
-                    }
-                }
-            });
+                frequencyTable[context] = 0;
+            }
+            frequencyTable[context]++;
         }
 
-        private string PredictNextEvent(string context, int maxOrder)
+        private string PredictNextEvent(int HRg, int maxOrder, int indexOfBranch)
         {
-            for (int order = maxOrder; order > 0; order--)
+            for (int order = maxOrder; order >= 0; order--)
             {
-                string[] contextParts = context.Split(' ');
-                string currentContext = string.Join(" ", contextParts.Skip(contextParts.Length - order));
+                if (indexOfBranch - order < 0) continue;
 
-                if (ppmModel.TryGetValue(currentContext, out var predictions))
+                CreateFrequencyTable(HRg, indexOfBranch, order);
+                string context = string.Join(" ", globalBranchStatus.Skip(indexOfBranch - order).Take(order));
+
+                if (frequencyTable.TryGetValue(context, out _))
                 {
-                    return predictions.OrderByDescending(kvp => kvp.Value).First().Key;
+                    return frequencyTable.OrderByDescending(kvp => kvp.Value).First().Key;
                 }
             }
 
-            return ppmModel.Values
-                           .SelectMany(dict => dict)
-                           .GroupBy(kvp => kvp.Key)
-                           .OrderByDescending(group => group.Sum(kvp => kvp.Value))
-                           .FirstOrDefault()?.Key;
+            return "0"; // Default prediction if no match is found
         }
 
         private bool ValidateTipBr(string tipBr)

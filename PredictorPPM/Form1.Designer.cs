@@ -29,16 +29,14 @@
         private void InitializeComponent()
         {
             this.incorrectTextBox = new System.Windows.Forms.Label();
-            this.l_accuracy = new System.Windows.Forms.Label();
-            this.l_rateError = new System.Windows.Forms.Label();
+            this.l_IncorctPredictions = new System.Windows.Forms.Label();
+            this.l_CorrectPredictions = new System.Windows.Forms.Label();
             this.correctTextBox = new System.Windows.Forms.Label();
-            this.branchesTextBox = new System.Windows.Forms.Label();
-            this.l_numberOfJumps = new System.Windows.Forms.Label();
-            this.l_corectPredictions = new System.Windows.Forms.Label();
-            this.noBranchesTextBox = new System.Windows.Forms.Label();
+            this.TotalTextBox = new System.Windows.Forms.Label();
+            this.l_Total = new System.Windows.Forms.Label();
             this.b_start = new System.Windows.Forms.Button();
             this.accuracyProgressBar = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.l_accuracy = new System.Windows.Forms.Label();
             this.accuracyLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.contextSizeTextBox = new System.Windows.Forms.TextBox();
@@ -58,27 +56,27 @@
             this.incorrectTextBox.Size = new System.Drawing.Size(49, 24);
             this.incorrectTextBox.TabIndex = 0;
             // 
-            // l_accuracy
+            // l_IncorctPredictions
             // 
-            this.l_accuracy.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_accuracy.Location = new System.Drawing.Point(18, 138);
-            this.l_accuracy.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_accuracy.Name = "l_accuracy";
-            this.l_accuracy.Size = new System.Drawing.Size(143, 24);
-            this.l_accuracy.TabIndex = 1;
-            this.l_accuracy.Text = "Incorrect Predictions:";
-            this.l_accuracy.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.l_IncorctPredictions.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l_IncorctPredictions.Location = new System.Drawing.Point(18, 138);
+            this.l_IncorctPredictions.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.l_IncorctPredictions.Name = "l_IncorctPredictions";
+            this.l_IncorctPredictions.Size = new System.Drawing.Size(143, 24);
+            this.l_IncorctPredictions.TabIndex = 1;
+            this.l_IncorctPredictions.Text = "Incorrect Predictions:";
+            this.l_IncorctPredictions.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // l_rateError
+            // l_CorrectPredictions
             // 
-            this.l_rateError.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_rateError.Location = new System.Drawing.Point(28, 104);
-            this.l_rateError.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_rateError.Name = "l_rateError";
-            this.l_rateError.Size = new System.Drawing.Size(133, 24);
-            this.l_rateError.TabIndex = 2;
-            this.l_rateError.Text = "Correct Predictions:";
-            this.l_rateError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.l_CorrectPredictions.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l_CorrectPredictions.Location = new System.Drawing.Point(28, 104);
+            this.l_CorrectPredictions.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.l_CorrectPredictions.Name = "l_CorrectPredictions";
+            this.l_CorrectPredictions.Size = new System.Drawing.Size(133, 24);
+            this.l_CorrectPredictions.TabIndex = 2;
+            this.l_CorrectPredictions.Text = "Correct Predictions:";
+            this.l_CorrectPredictions.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // correctTextBox
             // 
@@ -90,47 +88,26 @@
             this.correctTextBox.Size = new System.Drawing.Size(49, 24);
             this.correctTextBox.TabIndex = 3;
             // 
-            // branchesTextBox
+            // TotalTextBox
             // 
-            this.branchesTextBox.BackColor = System.Drawing.Color.SkyBlue;
-            this.branchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.branchesTextBox.Location = new System.Drawing.Point(179, 29);
-            this.branchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.branchesTextBox.Name = "branchesTextBox";
-            this.branchesTextBox.Size = new System.Drawing.Size(49, 24);
-            this.branchesTextBox.TabIndex = 7;
+            this.TotalTextBox.BackColor = System.Drawing.Color.SkyBlue;
+            this.TotalTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.TotalTextBox.Location = new System.Drawing.Point(179, 65);
+            this.TotalTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.TotalTextBox.Name = "TotalTextBox";
+            this.TotalTextBox.Size = new System.Drawing.Size(49, 24);
+            this.TotalTextBox.TabIndex = 7;
             // 
-            // l_numberOfJumps
+            // l_Total
             // 
-            this.l_numberOfJumps.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_numberOfJumps.Location = new System.Drawing.Point(88, 29);
-            this.l_numberOfJumps.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_numberOfJumps.Name = "l_numberOfJumps";
-            this.l_numberOfJumps.Size = new System.Drawing.Size(73, 24);
-            this.l_numberOfJumps.TabIndex = 6;
-            this.l_numberOfJumps.Text = "Branches:";
-            this.l_numberOfJumps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // l_corectPredictions
-            // 
-            this.l_corectPredictions.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_corectPredictions.Location = new System.Drawing.Point(70, 68);
-            this.l_corectPredictions.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.l_corectPredictions.Name = "l_corectPredictions";
-            this.l_corectPredictions.Size = new System.Drawing.Size(91, 24);
-            this.l_corectPredictions.TabIndex = 5;
-            this.l_corectPredictions.Text = "No branches:";
-            this.l_corectPredictions.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // noBranchesTextBox
-            // 
-            this.noBranchesTextBox.BackColor = System.Drawing.Color.SkyBlue;
-            this.noBranchesTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.noBranchesTextBox.Location = new System.Drawing.Point(179, 68);
-            this.noBranchesTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.noBranchesTextBox.Name = "noBranchesTextBox";
-            this.noBranchesTextBox.Size = new System.Drawing.Size(49, 24);
-            this.noBranchesTextBox.TabIndex = 4;
+            this.l_Total.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l_Total.Location = new System.Drawing.Point(88, 65);
+            this.l_Total.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.l_Total.Name = "l_Total";
+            this.l_Total.Size = new System.Drawing.Size(73, 24);
+            this.l_Total.TabIndex = 6;
+            this.l_Total.Text = "Branches:";
+            this.l_Total.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // b_start
             // 
@@ -156,16 +133,16 @@
             this.accuracyProgressBar.Size = new System.Drawing.Size(134, 19);
             this.accuracyProgressBar.TabIndex = 9;
             // 
-            // label1
+            // l_accuracy
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(337, 95);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Accuracy:";
+            this.l_accuracy.AutoSize = true;
+            this.l_accuracy.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l_accuracy.Location = new System.Drawing.Point(337, 95);
+            this.l_accuracy.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.l_accuracy.Name = "l_accuracy";
+            this.l_accuracy.Size = new System.Drawing.Size(64, 13);
+            this.l_accuracy.TabIndex = 10;
+            this.l_accuracy.Text = "Accuracy:";
             // 
             // accuracyLabel
             // 
@@ -251,16 +228,14 @@
             this.Controls.Add(this.contextSizeTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.accuracyLabel);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.l_accuracy);
             this.Controls.Add(this.accuracyProgressBar);
             this.Controls.Add(this.b_start);
-            this.Controls.Add(this.branchesTextBox);
-            this.Controls.Add(this.l_numberOfJumps);
-            this.Controls.Add(this.l_corectPredictions);
-            this.Controls.Add(this.noBranchesTextBox);
+            this.Controls.Add(this.TotalTextBox);
+            this.Controls.Add(this.l_Total);
             this.Controls.Add(this.correctTextBox);
-            this.Controls.Add(this.l_rateError);
-            this.Controls.Add(this.l_accuracy);
+            this.Controls.Add(this.l_CorrectPredictions);
+            this.Controls.Add(this.l_IncorctPredictions);
             this.Controls.Add(this.incorrectTextBox);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
@@ -273,16 +248,14 @@
         #endregion
 
         private System.Windows.Forms.Label incorrectTextBox;
-        private System.Windows.Forms.Label l_accuracy;
-        private System.Windows.Forms.Label l_rateError;
+        private System.Windows.Forms.Label l_IncorctPredictions;
+        private System.Windows.Forms.Label l_CorrectPredictions;
         private System.Windows.Forms.Label correctTextBox;
-        private System.Windows.Forms.Label branchesTextBox;
-        private System.Windows.Forms.Label l_numberOfJumps;
-        private System.Windows.Forms.Label l_corectPredictions;
-        private System.Windows.Forms.Label noBranchesTextBox;
+        private System.Windows.Forms.Label TotalTextBox;
+        private System.Windows.Forms.Label l_Total;
         private System.Windows.Forms.Button b_start;
         private System.Windows.Forms.ProgressBar accuracyProgressBar;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label l_accuracy;
         private System.Windows.Forms.Label accuracyLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox contextSizeTextBox;
