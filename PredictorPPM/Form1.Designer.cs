@@ -44,13 +44,14 @@
             this.label5 = new System.Windows.Forms.Label();
             this.listBox = new System.Windows.Forms.ListBox();
             this.AddFile_b = new System.Windows.Forms.Button();
+            this.predictionsListBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // incorrectTextBox
             // 
             this.incorrectTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.incorrectTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.incorrectTextBox.Location = new System.Drawing.Point(179, 138);
+            this.incorrectTextBox.Location = new System.Drawing.Point(179, 99);
             this.incorrectTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.incorrectTextBox.Name = "incorrectTextBox";
             this.incorrectTextBox.Size = new System.Drawing.Size(49, 24);
@@ -59,7 +60,7 @@
             // l_IncorctPredictions
             // 
             this.l_IncorctPredictions.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_IncorctPredictions.Location = new System.Drawing.Point(18, 138);
+            this.l_IncorctPredictions.Location = new System.Drawing.Point(18, 95);
             this.l_IncorctPredictions.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.l_IncorctPredictions.Name = "l_IncorctPredictions";
             this.l_IncorctPredictions.Size = new System.Drawing.Size(143, 24);
@@ -70,7 +71,7 @@
             // l_CorrectPredictions
             // 
             this.l_CorrectPredictions.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_CorrectPredictions.Location = new System.Drawing.Point(28, 104);
+            this.l_CorrectPredictions.Location = new System.Drawing.Point(28, 57);
             this.l_CorrectPredictions.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.l_CorrectPredictions.Name = "l_CorrectPredictions";
             this.l_CorrectPredictions.Size = new System.Drawing.Size(133, 24);
@@ -82,7 +83,7 @@
             // 
             this.correctTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.correctTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.correctTextBox.Location = new System.Drawing.Point(179, 104);
+            this.correctTextBox.Location = new System.Drawing.Point(179, 57);
             this.correctTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.correctTextBox.Name = "correctTextBox";
             this.correctTextBox.Size = new System.Drawing.Size(49, 24);
@@ -92,7 +93,7 @@
             // 
             this.TotalTextBox.BackColor = System.Drawing.Color.SkyBlue;
             this.TotalTextBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.TotalTextBox.Location = new System.Drawing.Point(179, 65);
+            this.TotalTextBox.Location = new System.Drawing.Point(179, 23);
             this.TotalTextBox.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.TotalTextBox.Name = "TotalTextBox";
             this.TotalTextBox.Size = new System.Drawing.Size(49, 24);
@@ -101,7 +102,7 @@
             // l_Total
             // 
             this.l_Total.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_Total.Location = new System.Drawing.Point(88, 65);
+            this.l_Total.Location = new System.Drawing.Point(88, 23);
             this.l_Total.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.l_Total.Name = "l_Total";
             this.l_Total.Size = new System.Drawing.Size(73, 24);
@@ -127,7 +128,7 @@
             // accuracyProgressBar
             // 
             this.accuracyProgressBar.BackColor = System.Drawing.SystemColors.Highlight;
-            this.accuracyProgressBar.Location = new System.Drawing.Point(428, 89);
+            this.accuracyProgressBar.Location = new System.Drawing.Point(179, 138);
             this.accuracyProgressBar.Margin = new System.Windows.Forms.Padding(2);
             this.accuracyProgressBar.Name = "accuracyProgressBar";
             this.accuracyProgressBar.Size = new System.Drawing.Size(134, 19);
@@ -137,7 +138,7 @@
             // 
             this.l_accuracy.AutoSize = true;
             this.l_accuracy.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_accuracy.Location = new System.Drawing.Point(337, 95);
+            this.l_accuracy.Location = new System.Drawing.Point(88, 138);
             this.l_accuracy.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.l_accuracy.Name = "l_accuracy";
             this.l_accuracy.Size = new System.Drawing.Size(64, 13);
@@ -147,7 +148,7 @@
             // accuracyLabel
             // 
             this.accuracyLabel.AutoSize = true;
-            this.accuracyLabel.Location = new System.Drawing.Point(425, 110);
+            this.accuracyLabel.Location = new System.Drawing.Point(176, 159);
             this.accuracyLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.accuracyLabel.Name = "accuracyLabel";
             this.accuracyLabel.Size = new System.Drawing.Size(0, 13);
@@ -215,12 +216,22 @@
             this.AddFile_b.UseVisualStyleBackColor = false;
             this.AddFile_b.Click += new System.EventHandler(this.AddFile_b_Click);
             // 
+            // predictionsListBox
+            // 
+            this.predictionsListBox.BackColor = System.Drawing.Color.SkyBlue;
+            this.predictionsListBox.FormattingEnabled = true;
+            this.predictionsListBox.Location = new System.Drawing.Point(386, 12);
+            this.predictionsListBox.Name = "predictionsListBox";
+            this.predictionsListBox.Size = new System.Drawing.Size(212, 160);
+            this.predictionsListBox.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(609, 389);
+            this.Controls.Add(this.predictionsListBox);
             this.Controls.Add(this.AddFile_b);
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.label5);
@@ -263,6 +274,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.Button AddFile_b;
+        private System.Windows.Forms.ListBox predictionsListBox;
     }
 }
 

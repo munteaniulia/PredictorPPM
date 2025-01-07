@@ -18,6 +18,7 @@ namespace PredictorPPM
         private Dictionary<string, Dictionary<string, int>> frequencyTable;
         private Dictionary<string, string> fileMap = new Dictionary<string, string>();
         private List<bool> globalBranchStatus = new List<bool>();
+        private Dictionary<int, int> predictionsByOrder = new Dictionary<int, int>(); // New field to track predictions by order
 
         public struct JumpRecord
         {
@@ -65,6 +66,7 @@ namespace PredictorPPM
             }
 
             jumpRecords.Clear();
+            predictionsByOrder.Clear(); // Reset predictions by order
 
             await Task.Run(() =>
             {
@@ -146,6 +148,11 @@ namespace PredictorPPM
                     double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
                     accuracyProgressBar.Value = Math.Min((int)accuracy, 100);
                     accuracyLabel.Text = $"{accuracy:F2}%";
+                    predictionsListBox.Items.Clear();
+                    foreach (var order in predictionsByOrder.Keys)
+                    {
+                        predictionsListBox.Items.Add($"Order {order}: {predictionsByOrder[order]} predictions");
+                    }
                 }));
             });
 
@@ -172,13 +179,14 @@ namespace PredictorPPM
         private void CreateFrequencyTable(int HRg, int indexOfBranch, int order)
         {
             frequencyTable = new Dictionary<string, Dictionary<string, int>>();
+            int startIndex = Math.Max(0, indexOfBranch - HRg);
+            var history = globalBranchStatus.Skip(startIndex).Take(HRg).ToList();
 
-            for (int i = Math.Max(0, indexOfBranch - HRg); i < indexOfBranch; i++)
+
+            for (int i = 0; i <= history.Count - order - 1; i++)
             {
-                if (i + order >= jumpRecords.Count) continue;
-
-                string context = string.Join(" ", globalBranchStatus.Skip(i).Take(order));
-                string nextBit = globalBranchStatus[i + order].ToString();
+                string context = string.Join(" ", history.Skip(i).Take(order).Select(x => x.ToString()));
+                string nextBit = history[i + order].ToString();
 
                 if (!frequencyTable.ContainsKey(context))
                 {
@@ -197,22 +205,39 @@ namespace PredictorPPM
                 if (indexOfBranch - order < 0) continue;
 
                 string context = string.Join(" ", globalBranchStatus.Skip(Math.Max(0, indexOfBranch - order)).Take(order));
-
                 CreateFrequencyTable(HRg, indexOfBranch, order);
 
                 if (frequencyTable.ContainsKey(context))
                 {
-                    return frequencyTable[context].OrderByDescending(kvp => kvp.Value).First().Key;
+                    int trueCount = frequencyTable[context]["True"];
+                    int falseCount = frequencyTable[context]["False"];
+
+                    if (trueCount == falseCount)
+                    {
+                        continue;
+                    }
+
+                    if (!predictionsByOrder.ContainsKey(order))
+                    {
+                        predictionsByOrder[order] = 0;
+                    }
+                    predictionsByOrder[order]++;
+
+                    return trueCount > falseCount ? "True" : "False";
                 }
             }
 
-            int trueCount = globalBranchStatus.Take(indexOfBranch).Count(x => x);
-            int falseCount = indexOfBranch - trueCount;
+            if (!predictionsByOrder.ContainsKey(0))
+            {
+                predictionsByOrder[0] = 0;
+            }
+            predictionsByOrder[0]++;
 
-            return trueCount >= falseCount ? "True" : "False";
+            int globalTrueCount = globalBranchStatus.Take(indexOfBranch).Count(x => x);
+            int globalFalseCount = indexOfBranch - globalTrueCount;
+
+            return globalTrueCount >= globalFalseCount ? "True" : "False";
         }
-
-
 
 
         private bool ValidateTipBr(string tipBr)
