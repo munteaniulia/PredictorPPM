@@ -68,6 +68,11 @@ namespace PredictorPPM
             jumpRecords.Clear();
             predictionsByOrder.Clear(); // Reset predictions by order
 
+            loadingProgressBar.Visible = true;
+            loadingProgressBar.Style = ProgressBarStyle.Marquee; // Stil pentru animație
+
+            await Task.Delay(100);
+
             await Task.Run(() =>
             {
                 try
@@ -126,6 +131,8 @@ namespace PredictorPPM
 
                 int correctPredictions = 0;
                 int incorrectPredictions = 0;
+                int takenCount = 0;
+                int notTakenCount = 0;
 
                 for (int i = 0; i < jumpRecords.Count; i++)
                 {
@@ -133,31 +140,44 @@ namespace PredictorPPM
                     string predictedEvent = PredictNextEvent(HRg, maxOrder, i);
                     string actualEvent = globalBranchStatus[i].ToString();
 
+                    if (actualEvent == "True")
+                        takenCount++;
+                    else
+                        notTakenCount++;
+
                     if (predictedEvent == actualEvent)
                         correctPredictions++;
                     else
                         incorrectPredictions++;
                 }
 
+                // Actualizăm interfața
                 this.Invoke(new Action(() =>
                 {
-                    TotalTextBox.Text = jumpRecords.Count.ToString();
+                    totalTextBox.Text = jumpRecords.Count.ToString();
                     correctTextBox.Text = correctPredictions.ToString();
                     incorrectTextBox.Text = incorrectPredictions.ToString();
+                    takenTextBox.Text = takenCount.ToString();
+                    notTakenTextBox.Text = notTakenCount.ToString();
 
                     double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
                     accuracyProgressBar.Value = Math.Min((int)accuracy, 100);
                     accuracyLabel.Text = $"{accuracy:F2}%";
+
                     predictionsListBox.Items.Clear();
                     foreach (var order in predictionsByOrder.Keys)
                     {
                         predictionsListBox.Items.Add($"Order {order}: {predictionsByOrder[order]} predictions");
                     }
+
+                    // Ascundem cercul de încărcare
+                    loadingProgressBar.Visible = false;
                 }));
             });
 
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
 
         private void DetermineBranchStatus()
         {
@@ -251,5 +271,6 @@ namespace PredictorPPM
             return (firstChar == 'B' || firstChar == 'N') &&
                    (secondChar == 'T' || secondChar == 'F' || secondChar == 'S' || secondChar == 'M' || secondChar == 'R');
         }
+
     }
 }
