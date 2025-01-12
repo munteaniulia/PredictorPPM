@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Collections;
 
 namespace PredictorPPM
 {
     public partial class Form1 : Form
     {
+        private List<JumpRecord> jumpRecords = new List<JumpRecord>();
+        private Dictionary<string, Dictionary<string, int>> frequencyTable;
+        private Dictionary<string, string> fileMap = new Dictionary<string, string>();
+        private BitArray globalBranchStatus; // Efficient boolean storage
+        private Dictionary<int, int> predictionsByOrder = new Dictionary<int, int>();
+        private bool isPPMComplete = true; // Default mode is PPM Complete
+
         public Form1()
         {
             InitializeComponent();
         }
-
-        private List<JumpRecord> jumpRecords = new List<JumpRecord>();
-        private Dictionary<string, Dictionary<string, int>> frequencyTable;
-        private Dictionary<string, string> fileMap = new Dictionary<string, string>();
-        private List<bool> globalBranchStatus = new List<bool>();
-        private Dictionary<int, int> predictionsByOrder = new Dictionary<int, int>(); // New field to track predictions by order
 
         public struct JumpRecord
         {
@@ -66,146 +68,217 @@ namespace PredictorPPM
             }
 
             jumpRecords.Clear();
-            predictionsByOrder.Clear(); // Reset predictions by order
-
+            predictionsByOrder.Clear();
             loadingProgressBar.Visible = true;
-            loadingProgressBar.Style = ProgressBarStyle.Marquee; // Stil pentru animație
+            loadingProgressBar.Style = ProgressBarStyle.Marquee;
 
             await Task.Delay(100);
 
-            await Task.Run(() =>
+            try
             {
-                try
-                {
-                    foreach (var line in File.ReadLines(selectedFilePath))
-                    {
-                        if (string.IsNullOrWhiteSpace(line)) continue;
+                await Task.Run(() => ReadJumpRecords(selectedFilePath));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error reading the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-                        string[] parts = line.Split(' ');
-                        if (parts.Length == 3 && ValidateTipBr(parts[0]))
-                        {
-                            jumpRecords.Add(new JumpRecord
-                            {
-                                TipBr = parts[0],
-                                AdrCrt = parts[1],
-                                AdrDest = parts[2]
-                            });
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show($"Error reading the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }));
-                    return;
-                }
+            if (jumpRecords.Count == 0)
+            {
+                MessageBox.Show("The selected file does not contain valid data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                loadingProgressBar.Visible = false;
+                return;
+            }
 
-                if (jumpRecords.Count == 0)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show("The selected file does not contain valid data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }));
-                    return;
-                }
+            if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
+            {
+                MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadingProgressBar.Visible = false;
+                return;
+            }
 
-                if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }));
-                    return;
-                }
+            if (!int.TryParse(mTextBox.Text, out int maxOrder) || maxOrder < 0)
+            {
+                MessageBox.Show("Please enter a valid Order Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                loadingProgressBar.Visible = false;
+                return;
+            }
 
-                if (!int.TryParse(mTextBox.Text, out int maxOrder) || maxOrder < 0)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show("Please enter a valid Order Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }));
-                    return;
-                }
-
-                int correctPredictions = 0;
-                int incorrectPredictions = 0;
-                int takenCount = 0;
-                int notTakenCount = 0;
-
-                for (int i = 0; i < jumpRecords.Count; i++)
-                {
-                    DetermineBranchStatus();
-                    string predictedEvent = PredictNextEvent(HRg, maxOrder, i);
-                    string actualEvent = globalBranchStatus[i].ToString();
-
-                    if (actualEvent == "True")
-                        takenCount++;
-                    else
-                        notTakenCount++;
-
-                    if (predictedEvent == actualEvent)
-                        correctPredictions++;
-                    else
-                        incorrectPredictions++;
-                }
-
-                // Actualizăm interfața
-                this.Invoke(new Action(() =>
-                {
-                    totalTextBox.Text = jumpRecords.Count.ToString();
-                    correctTextBox.Text = correctPredictions.ToString();
-                    incorrectTextBox.Text = incorrectPredictions.ToString();
-                    takenTextBox.Text = takenCount.ToString();
-                    notTakenTextBox.Text = notTakenCount.ToString();
-
-                    double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
-                    accuracyProgressBar.Value = Math.Min((int)accuracy, 100);
-                    accuracyLabel.Text = $"{accuracy:F2}%";
-
-                    predictionsListBox.Items.Clear();
-                    foreach (var order in predictionsByOrder.Keys)
-                    {
-                        predictionsListBox.Items.Add($"Order {order}: {predictionsByOrder[order]} predictions");
-                    }
-
-                    // Ascundem cercul de încărcare
-                    loadingProgressBar.Visible = false;
-                }));
-            });
+            await Task.Run(() => ProcessData(HRg, maxOrder));
+            loadingProgressBar.Visible = false;
 
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-
-        private void DetermineBranchStatus()
+        private void ReadJumpRecords(string filePath)
         {
-            globalBranchStatus.Clear();
-
-            foreach (var record in jumpRecords)
+            foreach (var line in File.ReadLines(filePath))
             {
-                if (int.TryParse(record.AdrCrt, out int adrCrt) && int.TryParse(record.AdrDest, out int adrDest))
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                string[] parts = line.Split(' ');
+                if (parts.Length == 3 && ValidateTipBr(parts[0]))
                 {
-                    globalBranchStatus.Add(adrDest != adrCrt + 1);
-                }
-                else
-                {
-                    globalBranchStatus.Add(false);
+                    jumpRecords.Add(new JumpRecord
+                    {
+                        TipBr = parts[0],
+                        AdrCrt = parts[1],
+                        AdrDest = parts[2]
+                    });
                 }
             }
         }
+
+        private void ProcessData(int HRg, int maxOrder)
+        {
+            globalBranchStatus = new BitArray(jumpRecords.Count);
+            DetermineBranchStatus();
+
+            int correctPredictions = 0, incorrectPredictions = 0;
+            int takenCount = 0, notTakenCount = 0;
+
+            for (int i = 0; i < jumpRecords.Count; i++)
+            {
+                string predictedEvent = PredictNextEvent(HRg, maxOrder, i, isPPMComplete);
+                string actualEvent = globalBranchStatus[i] ? "True" : "False";
+
+                if (actualEvent == "True") takenCount++;
+                else notTakenCount++;
+
+                if (predictedEvent == actualEvent) correctPredictions++;
+                else incorrectPredictions++;
+            }
+
+            Invoke(new Action(() =>
+            {
+                totalTextBox.Text = jumpRecords.Count.ToString();
+                correctTextBox.Text = correctPredictions.ToString();
+                incorrectTextBox.Text = incorrectPredictions.ToString();
+                takenTextBox.Text = takenCount.ToString();
+                notTakenTextBox.Text = notTakenCount.ToString();
+
+                double accuracy = (double)correctPredictions / (correctPredictions + incorrectPredictions) * 100;
+                accuracyProgressBar.Value = Math.Min((int)accuracy, 100);
+                accuracyLabel.Text = $"{accuracy:F2}%";
+
+                predictionsListBox.Items.Clear();
+                foreach (var order in predictionsByOrder.Keys)
+                {
+                    predictionsListBox.Items.Add($"Order {order}: {predictionsByOrder[order]} predictions");
+                }
+            }));
+        }
+        private string PredictOrder0(int indexOfBranch)
+        {
+            Dictionary<string, int> globalFrequency = new Dictionary<string, int> { { "True", 0 }, { "False", 0 } };
+
+            foreach (bool status in globalBranchStatus.Cast<bool>().Take(indexOfBranch))
+            {
+                string statusStr = status.ToString();
+                globalFrequency[statusStr]++;
+            }
+
+            if (!predictionsByOrder.ContainsKey(0)) predictionsByOrder[0] = 0;
+            predictionsByOrder[0]++;
+
+            return globalFrequency["True"] > globalFrequency["False"] ? "True" : "False";
+        }
+
+
+
+
+        private string PredictMaxOrder(int HRg, int maxOrder, int indexOfBranch)
+        {
+            if (indexOfBranch - maxOrder < 0) return null;
+
+            string context = string.Join(" ", globalBranchStatus.Cast<bool>().Skip(Math.Max(0, indexOfBranch - maxOrder)).Take(maxOrder));
+            CreateFrequencyTable(HRg, indexOfBranch, maxOrder);
+
+            if (frequencyTable.TryGetValue(context, out var counts))
+            {
+                int trueCount = counts["True"];
+                int falseCount = counts["False"];
+
+                if (trueCount != falseCount)
+                {
+                    if (!predictionsByOrder.ContainsKey(maxOrder)) predictionsByOrder[maxOrder] = 0;
+                    predictionsByOrder[maxOrder]++;
+                    return trueCount > falseCount ? "True" : "False";
+                }
+            }
+
+            return null;
+        }
+
+        private string PredictForOrder(int HRg, int order, int indexOfBranch)
+        {
+            if (indexOfBranch - order < 0) return null;
+
+            string context = string.Join(" ", globalBranchStatus.Cast<bool>().Skip(Math.Max(0, indexOfBranch - order)).Take(order));
+            CreateFrequencyTable(HRg, indexOfBranch, order);
+
+            if (frequencyTable.TryGetValue(context, out var counts))
+            {
+                int trueCount = counts["True"];
+                int falseCount = counts["False"];
+
+                if (trueCount != falseCount)
+                {
+                    return trueCount > falseCount ? "True" : "False";
+                }
+            }
+
+            return null; // No prediction available at this order
+        }
+
+
+        private string PredictNextEvent(int HRg, int maxOrder, int indexOfBranch, bool isPPMComplete)
+        {
+            if (isPPMComplete)
+            {
+                // PPM Complete: Try all orders from maxOrder to 0
+                for (int order = maxOrder; order >= 0; order--)
+                {
+                    string result = PredictForOrder(HRg, order, indexOfBranch);
+                    if (result != null)
+                    {
+                        if (!predictionsByOrder.ContainsKey(order)) predictionsByOrder[order] = 0;
+                        predictionsByOrder[order]++;
+                        return result;
+                    }
+                }
+            }
+            else
+            {
+                // PPM Simple: Try only maxOrder, then fallback to order 0
+                string result = PredictForOrder(HRg, maxOrder, indexOfBranch);
+                if (result != null)
+                {
+                    if (!predictionsByOrder.ContainsKey(maxOrder)) predictionsByOrder[maxOrder] = 0;
+                    predictionsByOrder[maxOrder]++;
+                    return result;
+                }
+
+                // Fallback to order 0
+                return PredictOrder0(indexOfBranch);
+            }
+
+            return PredictOrder0(indexOfBranch); // Final fallback for both modes
+        }
+
+
+
 
         private void CreateFrequencyTable(int HRg, int indexOfBranch, int order)
         {
             frequencyTable = new Dictionary<string, Dictionary<string, int>>();
             int startIndex = Math.Max(0, indexOfBranch - HRg);
-            var history = globalBranchStatus.Skip(startIndex).Take(HRg).ToList();
-
+            var history = globalBranchStatus.Cast<bool>().Skip(startIndex).Take(HRg).ToList();
 
             for (int i = 0; i <= history.Count - order - 1; i++)
             {
-                string context = string.Join(" ", history.Skip(i).Take(order).Select(x => x.ToString()));
+                string context = string.Join(" ", history.Skip(i).Take(order));
                 string nextBit = history[i + order].ToString();
 
                 if (!frequencyTable.ContainsKey(context))
@@ -217,53 +290,24 @@ namespace PredictorPPM
             }
         }
 
-
-        private string PredictNextEvent(int HRg, int maxOrder, int indexOfBranch)
+        private void DetermineBranchStatus()
         {
-            for (int order = maxOrder; order >= 0; order--)
+            for (int i = 0; i < jumpRecords.Count; i++)
             {
-                if (indexOfBranch - order < 0) continue;
-
-                string context = string.Join(" ", globalBranchStatus.Skip(Math.Max(0, indexOfBranch - order)).Take(order));
-                CreateFrequencyTable(HRg, indexOfBranch, order);
-
-                if (frequencyTable.ContainsKey(context))
+                if (int.TryParse(jumpRecords[i].AdrCrt, out int adrCrt) && int.TryParse(jumpRecords[i].AdrDest, out int adrDest))
                 {
-                    int trueCount = frequencyTable[context]["True"];
-                    int falseCount = frequencyTable[context]["False"];
-
-                    if (trueCount == falseCount)
-                    {
-                        continue;
-                    }
-
-                    if (!predictionsByOrder.ContainsKey(order))
-                    {
-                        predictionsByOrder[order] = 0;
-                    }
-                    predictionsByOrder[order]++;
-
-                    return trueCount > falseCount ? "True" : "False";
+                    globalBranchStatus[i] = adrDest != adrCrt + 1;
+                }
+                else
+                {
+                    globalBranchStatus[i] = false;
                 }
             }
-
-            if (!predictionsByOrder.ContainsKey(0))
-            {
-                predictionsByOrder[0] = 0;
-            }
-            predictionsByOrder[0]++;
-
-            int globalTrueCount = globalBranchStatus.Take(indexOfBranch).Count(x => x);
-            int globalFalseCount = indexOfBranch - globalTrueCount;
-
-            return globalTrueCount >= globalFalseCount ? "True" : "False";
         }
-
 
         private bool ValidateTipBr(string tipBr)
         {
-            if (string.IsNullOrEmpty(tipBr) || tipBr.Length != 2)
-                return false;
+            if (string.IsNullOrEmpty(tipBr) || tipBr.Length != 2) return false;
 
             char firstChar = tipBr[0];
             char secondChar = tipBr[1];
@@ -272,5 +316,11 @@ namespace PredictorPPM
                    (secondChar == 'T' || secondChar == 'F' || secondChar == 'S' || secondChar == 'M' || secondChar == 'R');
         }
 
+        private void toggleModeButton_Click(object sender, EventArgs e)
+        {
+            isPPMComplete = !isPPMComplete;
+            modeLabel.Text = isPPMComplete ? "Mode: PPM Complete" : "Mode: PPM Simple";
+            toggleModeButton.Text = isPPMComplete ? "Switch to Simple PPM" : "Switch to Complete PPM";
+        }
     }
 }
