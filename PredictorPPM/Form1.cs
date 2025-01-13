@@ -229,7 +229,7 @@ namespace PredictorPPM
                 }
             }
 
-            return null; // No prediction available at this order
+            return null; 
         }
 
 
@@ -237,7 +237,6 @@ namespace PredictorPPM
         {
             if (isPPMComplete)
             {
-                // PPM Complete: Try all orders from maxOrder to 0
                 for (int order = maxOrder; order >= 0; order--)
                 {
                     string result = PredictForOrder(HRg, order, indexOfBranch);
@@ -251,7 +250,6 @@ namespace PredictorPPM
             }
             else
             {
-                // PPM Simple: Try only maxOrder, then fallback to order 0
                 string result = PredictForOrder(HRg, maxOrder, indexOfBranch);
                 if (result != null)
                 {
@@ -260,11 +258,10 @@ namespace PredictorPPM
                     return result;
                 }
 
-                // Fallback to order 0
                 return PredictOrder0(indexOfBranch);
             }
 
-            return PredictOrder0(indexOfBranch); // Final fallback for both modes
+            return PredictOrder0(indexOfBranch);
         }
 
 
