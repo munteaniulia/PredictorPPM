@@ -13,9 +13,9 @@ namespace PredictorPPM
         private List<JumpRecord> jumpRecords = new List<JumpRecord>();
         private Dictionary<string, Dictionary<string, int>> frequencyTable;
         private Dictionary<string, string> fileMap = new Dictionary<string, string>();
-        private BitArray globalBranchStatus; // Efficient boolean storage
+        private BitArray globalBranchStatus;
         private Dictionary<int, int> predictionsByOrder = new Dictionary<int, int>();
-        private bool isPPMComplete = true; // Default mode is PPM Complete
+        private bool isPPMComplete = true;
 
         public Form1()
         {
