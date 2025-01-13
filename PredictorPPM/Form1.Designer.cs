@@ -52,6 +52,7 @@
             this.loadingProgressBar = new System.Windows.Forms.ProgressBar();
             this.toggleModeButton = new System.Windows.Forms.Button();
             this.modeLabel = new System.Windows.Forms.Label();
+            this.executionTimeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // incorrectTextBox
@@ -311,12 +312,22 @@
             this.modeLabel.Text = "Mode: PPM Complete";
             this.modeLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // executionTimeLabel
+            // 
+            this.executionTimeLabel.AutoSize = true;
+            this.executionTimeLabel.Location = new System.Drawing.Point(561, 154);
+            this.executionTimeLabel.Name = "executionTimeLabel";
+            this.executionTimeLabel.Size = new System.Drawing.Size(108, 13);
+            this.executionTimeLabel.TabIndex = 26;
+            this.executionTimeLabel.Text = "Execution Time: 0 ms";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(732, 457);
+            this.Controls.Add(this.executionTimeLabel);
             this.Controls.Add(this.modeLabel);
             this.Controls.Add(this.toggleModeButton);
             this.Controls.Add(this.loadingProgressBar);
@@ -376,6 +387,7 @@
         private System.Windows.Forms.ProgressBar loadingProgressBar;
         private System.Windows.Forms.Button toggleModeButton;
         private System.Windows.Forms.Label modeLabel;
+        private System.Windows.Forms.Label executionTimeLabel;
     }
 }
 

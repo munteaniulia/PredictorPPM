@@ -16,6 +16,7 @@ namespace PredictorPPM
         private BitArray globalBranchStatus;
         private Dictionary<int, int> predictionsByOrder = new Dictionary<int, int>();
         private bool isPPMComplete = true;
+        Dictionary<string, int> globalFrequency = new Dictionary<string, int> { { "True", 0 }, { "False", 0 } };
 
         public Form1()
         {
@@ -76,40 +77,50 @@ namespace PredictorPPM
 
             try
             {
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew(); // Start the stopwatch
+
                 await Task.Run(() => ReadJumpRecords(selectedFilePath));
+                if (jumpRecords.Count == 0)
+                {
+                    MessageBox.Show("The selected file does not contain valid data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    loadingProgressBar.Visible = false;
+                    return;
+                }
+
+                if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
+                {
+                    MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    loadingProgressBar.Visible = false;
+                    return;
+                }
+
+                if (!int.TryParse(mTextBox.Text, out int maxOrder) || maxOrder < 0)
+                {
+                    MessageBox.Show("Please enter a valid Order Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    loadingProgressBar.Visible = false;
+                    return;
+                }
+
+                await Task.Run(() => ProcessData(HRg, maxOrder));
+
+                stopwatch.Stop(); // Stop the stopwatch
+
+                // Display execution time in seconds
+                double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+                executionTimeLabel.Text = $"Execution Time: {elapsedSeconds:F2} s"; // Update the label
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error reading the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            if (jumpRecords.Count == 0)
+            finally
             {
-                MessageBox.Show("The selected file does not contain valid data!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 loadingProgressBar.Visible = false;
-                return;
             }
-
-            if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
-            {
-                MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                loadingProgressBar.Visible = false;
-                return;
-            }
-
-            if (!int.TryParse(mTextBox.Text, out int maxOrder) || maxOrder < 0)
-            {
-                MessageBox.Show("Please enter a valid Order Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                loadingProgressBar.Visible = false;
-                return;
-            }
-
-            await Task.Run(() => ProcessData(HRg, maxOrder));
-            loadingProgressBar.Visible = false;
 
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
 
         private void ReadJumpRecords(string filePath)
         {
@@ -171,19 +182,21 @@ namespace PredictorPPM
         }
         private string PredictOrder0(int indexOfBranch)
         {
-            Dictionary<string, int> globalFrequency = new Dictionary<string, int> { { "True", 0 }, { "False", 0 } };
+            int trueCount = 0;
+            int falseCount = 0;
 
-            foreach (bool status in globalBranchStatus.Cast<bool>().Take(indexOfBranch))
+            for (int i = 0; i < indexOfBranch; i++)
             {
-                string statusStr = status.ToString();
-                globalFrequency[statusStr]++;
+                if (globalBranchStatus[i]) trueCount++;
+                else falseCount++;
             }
 
             if (!predictionsByOrder.ContainsKey(0)) predictionsByOrder[0] = 0;
             predictionsByOrder[0]++;
 
-            return globalFrequency["True"] > globalFrequency["False"] ? "True" : "False";
+            return trueCount > falseCount ? "True" : "False";
         }
+
 
 
 
