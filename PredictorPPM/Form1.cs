@@ -55,6 +55,16 @@ namespace PredictorPPM
 
         private async void b_start_Click(object sender, EventArgs e)
         {
+            totalTextBox.Text = "";
+            correctTextBox.Text = "";
+            incorrectTextBox.Text = "";
+            takenTextBox.Text = "";
+            notTakenTextBox.Text = "";
+            accuracyLabel.Text = "";
+            executionTimeLabel.Text = "Execution Time: 0 ms";
+            accuracyProgressBar.Value = 0;
+            predictionsListBox.Items.Clear();
+
             if (listBox.SelectedItem == null)
             {
                 MessageBox.Show("Please select a file from the ListBox!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -103,11 +113,20 @@ namespace PredictorPPM
 
                 await Task.Run(() => ProcessData(HRg, maxOrder));
 
-                stopwatch.Stop(); // Stop the stopwatch
+                stopwatch.Stop();
 
-                // Display execution time in seconds
                 double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
-                executionTimeLabel.Text = $"Execution Time: {elapsedSeconds:F2} s"; // Update the label
+                if (elapsedSeconds >= 60)
+                {
+                    int minutes = (int)(elapsedSeconds / 60);
+                    double seconds = elapsedSeconds % 60;  
+                    executionTimeLabel.Text = $"Execution Time: {minutes} min {seconds:F2} s";
+                }
+                else
+                {
+                    executionTimeLabel.Text = $"Execution Time: {elapsedSeconds:F2} s";
+                }
+
             }
             catch (Exception ex)
             {
@@ -193,7 +212,7 @@ namespace PredictorPPM
 
             if (!predictionsByOrder.ContainsKey(0)) predictionsByOrder[0] = 0;
             predictionsByOrder[0]++;
-
+            
             return trueCount > falseCount ? "True" : "False";
         }
 
@@ -220,7 +239,6 @@ namespace PredictorPPM
                     return trueCount > falseCount ? "True" : "False";
                 }
             }
-
             return null;
         }
 
@@ -332,5 +350,6 @@ namespace PredictorPPM
             modeLabel.Text = isPPMComplete ? "Mode: PPM Complete" : "Mode: PPM Simple";
             toggleModeButton.Text = isPPMComplete ? "Switch to Simple PPM" : "Switch to Complete PPM";
         }
+
     }
 }
