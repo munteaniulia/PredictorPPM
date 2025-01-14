@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PredictorPPM.Form1">
+    <Position X="6" Y="2" Width="3" />
+    <Members>
+      <Field Name="accuracyLabel" Hidden="true" />
+      <Field Name="accuracyProgressBar" Hidden="true" />
+      <Field Name="AddFile_b" Hidden="true" />
+      <Field Name="b_start" Hidden="true" />
+      <Field Name="components" Hidden="true" />
+      <Field Name="correctTextBox" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Field Name="executionTimeLabel" Hidden="true" />
+      <Field Name="HRgTextBox" Hidden="true" />
+      <Field Name="incorrectTextBox" Hidden="true" />
+      <Method Name="InitializeComponent" Hidden="true" />
+      <Field Name="l_accuracy" Hidden="true" />
+      <Field Name="l_CorrectPredictions" Hidden="true" />
+      <Field Name="l_IncorctPredictions" Hidden="true" />
+      <Field Name="l_Total" Hidden="true" />
+      <Field Name="label2" Hidden="true" />
+      <Field Name="label3" Hidden="true" />
+      <Field Name="label4" Hidden="true" />
+      <Field Name="label5" Hidden="true" />
+      <Field Name="listBox" Hidden="true" />
+      <Field Name="loadingProgressBar" Hidden="true" />
+      <Field Name="modeLabel" Hidden="true" />
+      <Field Name="mTextBox" Hidden="true" />
+      <Field Name="notTakenTextBox" Hidden="true" />
+      <Field Name="predictionsListBox" Hidden="true" />
+      <Field Name="takenTextBox" Hidden="true" />
+      <Field Name="toggleModeButton" Hidden="true" />
+      <Field Name="totalTextBox" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="PredictorPPM.Form1.JumpRecord">
+        <TypeIdentifier>
+          <NewMemberFileName>Form1.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>WgIgEMBMQWgMABBAEQCQAAACEBAQRAgAgAkCCBIIAUA=</HashCode>
+      <FileName>Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
