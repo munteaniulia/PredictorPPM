@@ -32,26 +32,32 @@ namespace PredictorPPM
 
         private void AddFile_b_Click(object sender, EventArgs e)
         {
-            string directoryPath = @"C:\\Users\\Iulia Muntean\\Documents\\GitHub\\PredictorPPM\\TRAfiles";
-
-            if (Directory.Exists(directoryPath))
+            using (var openFileDialog = new OpenFileDialog())
             {
-                listBox.Items.Clear();
-                fileMap.Clear();
-                string[] files = Directory.GetFiles(directoryPath, "*.tra");
+                openFileDialog.Title = "Select .tra Files";
+                openFileDialog.Filter = "TRA Files (*.tra)|*.tra";
+                openFileDialog.Multiselect = true; // Allow multiple file selection
 
-                foreach (string filePath in files)
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string fileName = Path.GetFileName(filePath);
-                    fileMap[fileName] = filePath;
-                    listBox.Items.Add(fileName);
+                    listBox.Items.Clear();
+                    fileMap.Clear();
+
+                    foreach (string filePath in openFileDialog.FileNames)
+                    {
+                        string fileName = Path.GetFileName(filePath);
+                        fileMap[fileName] = filePath;
+                        listBox.Items.Add(fileName);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No files selected.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-            else
-            {
-                MessageBox.Show("The specified directory does not exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
+
+
 
         private async void b_start_Click(object sender, EventArgs e)
         {
@@ -87,7 +93,7 @@ namespace PredictorPPM
 
             try
             {
-                var stopwatch = System.Diagnostics.Stopwatch.StartNew(); // Start the stopwatch
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
                 await Task.Run(() => ReadJumpRecords(selectedFilePath));
                 if (jumpRecords.Count == 0)
@@ -97,7 +103,7 @@ namespace PredictorPPM
                     return;
                 }
 
-                if (!int.TryParse(contextSizeTextBox.Text, out int HRg) || HRg <= 0)
+                if (!int.TryParse(HRgTextBox.Text, out int HRg) || HRg <= 0)
                 {
                     MessageBox.Show("Please enter a valid Context Size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     loadingProgressBar.Visible = false;
@@ -139,7 +145,6 @@ namespace PredictorPPM
 
             MessageBox.Show("Processing completed!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
 
         private void ReadJumpRecords(string filePath)
         {
@@ -199,6 +204,7 @@ namespace PredictorPPM
                 }
             }));
         }
+
         private string PredictOrder0(int indexOfBranch)
         {
             int trueCount = 0;
@@ -215,10 +221,6 @@ namespace PredictorPPM
             
             return trueCount > falseCount ? "True" : "False";
         }
-
-
-
-
 
         private string PredictMaxOrder(int HRg, int maxOrder, int indexOfBranch)
         {
@@ -263,7 +265,6 @@ namespace PredictorPPM
             return null; 
         }
 
-
         private string PredictNextEvent(int HRg, int maxOrder, int indexOfBranch, bool isPPMComplete)
         {
             if (isPPMComplete)
@@ -294,9 +295,6 @@ namespace PredictorPPM
 
             return PredictOrder0(indexOfBranch);
         }
-
-
-
 
         private void CreateFrequencyTable(int HRg, int indexOfBranch, int order)
         {

@@ -39,7 +39,7 @@
             this.l_accuracy = new System.Windows.Forms.Label();
             this.accuracyLabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.contextSizeTextBox = new System.Windows.Forms.TextBox();
+            this.HRgTextBox = new System.Windows.Forms.TextBox();
             this.mTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.listBox = new System.Windows.Forms.ListBox();
@@ -170,18 +170,18 @@
             this.label3.Location = new System.Drawing.Point(341, 134);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 17);
+            this.label3.Size = new System.Drawing.Size(44, 17);
             this.label3.TabIndex = 12;
-            this.label3.Text = "Context size:";
+            this.label3.Text = "HRg:";
             // 
-            // contextSizeTextBox
+            // HRgTextBox
             // 
-            this.contextSizeTextBox.BackColor = System.Drawing.Color.LightCyan;
-            this.contextSizeTextBox.Location = new System.Drawing.Point(344, 165);
-            this.contextSizeTextBox.Margin = new System.Windows.Forms.Padding(2);
-            this.contextSizeTextBox.Name = "contextSizeTextBox";
-            this.contextSizeTextBox.Size = new System.Drawing.Size(76, 20);
-            this.contextSizeTextBox.TabIndex = 13;
+            this.HRgTextBox.BackColor = System.Drawing.Color.LightCyan;
+            this.HRgTextBox.Location = new System.Drawing.Point(344, 165);
+            this.HRgTextBox.Margin = new System.Windows.Forms.Padding(2);
+            this.HRgTextBox.Name = "HRgTextBox";
+            this.HRgTextBox.Size = new System.Drawing.Size(76, 20);
+            this.HRgTextBox.TabIndex = 13;
             // 
             // mTextBox
             // 
@@ -340,7 +340,7 @@
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.mTextBox);
-            this.Controls.Add(this.contextSizeTextBox);
+            this.Controls.Add(this.HRgTextBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.accuracyLabel);
             this.Controls.Add(this.l_accuracy);
@@ -374,7 +374,7 @@
         private System.Windows.Forms.Label l_accuracy;
         private System.Windows.Forms.Label accuracyLabel;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox contextSizeTextBox;
+        private System.Windows.Forms.TextBox HRgTextBox;
         private System.Windows.Forms.TextBox mTextBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListBox listBox;
