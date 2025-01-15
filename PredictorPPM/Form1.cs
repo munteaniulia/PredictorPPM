@@ -36,7 +36,7 @@ namespace PredictorPPM
             {
                 openFileDialog.Title = "Select .tra Files";
                 openFileDialog.Filter = "TRA Files (*.tra)|*.tra";
-                openFileDialog.Multiselect = true; // Allow multiple file selection
+                openFileDialog.Multiselect = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
